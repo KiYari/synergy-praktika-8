@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}{{ problem.issue_id }} - Expert Support System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Основная информация о проблеме -->
+    <div class="problem-header">
+        <h2>{{ problem.issue_id }}</h2>
+        <div class="problem-meta">
+            <span class="category-badge">{{ problem.category }}</span>
+            <span class="status-badge {{ problem.status }}">{{ problem.status }}</span>
+            <span class="date">Создана: {{ problem.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+        </div>
+    </div>
+
+    <div class="problem-description-card">
+        <h3>Описание проблемы</h3>
+        <p>{{ problem.user_description }}</p>
+    </div>
+
+    <!-- Симптомы -->
+    <section id="symptoms" class="section">
+        <div class="section-header">
+            <h3>Симптомы</h3>
+            <button class="btn btn-small" onclick="toggleForm('symptom-form')">+ Добавить симптом</button>
+        </div>
+
+        <div id="symptom-form" class="form-collapsible" style="display: none;">
+            <form method="post" action="/problems/{{ problem.issue_id }}/symptoms/add" class="inline-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Тип симптома:</label>
+                        <select name="type" required>
+                            {% for type in symptom_types %}
+                            <option value="{{ type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Значение:</label>
+                        <input type="text" name="value" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Окружение:</label>
+                        <input type="text" name="environment" placeholder="Windows 10, Chrome...">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+        </div>
+
+        <div class="items-grid">
+            {% for symptom in symptoms %}
+            <div class="item-card">
+                <div class="item-header">
+                    <strong>{{ symptom.type }}</strong>
+                </div>
+                <div class="item-content">
+                    <p>{{ symptom.value }}</p>
+                    {% if symptom.environment %}
+                    <small>Окружение: {{ symptom.environment }}</small>
+                    {% endif %}
+                </div>
+                <div class="item-date">
+                    {{ symptom.created_at.strftime('%H:%M') }}
+                </div>
+            </div>
+            {% else %}
+            <p class="no-items">Симптомы не добавлены</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Действия -->
+    <section id="actions" class="section">
+        <div class="section-header">
+            <h3>Предпринятые действия</h3>
+            <button class="btn btn-small" onclick="toggleForm('action-form')">+ Добавить действие</button>
+        </div>
+
+        <div id="action-form" class="form-collapsible" style="display: none;">
+            <form method="post" action="/problems/{{ problem.issue_id }}/actions/add" class="inline-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Действие:</label>
+                        <select name="action_taken" required>
+                            {% for action in action_types %}
+                            <option value="{{ action }}">{{ action }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Результат:</label>
+                        <select name="result" required>
+                            {% for result in result_types %}
+                            <option value="{{ result }}">{{ result }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Выполнил:</label>
+                        <input type="text" name="performed_by" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+        </div>
+
+        <div class="items-list">
+            {% for action in actions %}
+            <div class="item-card">
+                <div class="item-header">
+                    <strong>{{ action.action_taken }}</strong>
+                    <span class="result-badge {{ action.result }}">{{ action.result }}</span>
+                </div>
+                <div class="item-content">
+                    <p>Выполнил: {{ action.performed_by }}</p>
+                </div>
+                <div class="item-date">
+                    {{ action.created_at.strftime('%H:%M') }}
+                </div>
+            </div>
+            {% else %}
+            <p class="no-items">Действия не добавлены</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Решения -->
+    <section id="solutions" class="section">
+        <div class="section-header">
+            <h3>Предложенные решения</h3>
+            <button class="btn btn-small" onclick="toggleForm('solution-form')">+ Добавить решение</button>
+        </div>
+
+        <div id="solution-form" class="form-collapsible" style="display: none;">
+            <form method="post" action="/problems/{{ problem.issue_id }}/solutions/add" class="inline-form">
+                <div class="form-group">
+                    <label>Описание решения:</label>
+                    <input type="text" name="description" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Шаги выполнения:</label>
+                    <textarea name="steps" rows="3" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Уверенность:</label>
+                        <input type="number" name="confidence" min="0" max="1" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Для линии поддержки:</label>
+                        <select name="for_line" required>
+                            {% for line in line_types %}
+                            <option value="{{ line }}">{{ line }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+        </div>
+
+        <div class="items-grid">
+            {% for solution in solutions %}
+            <div class="item-card solution-card">
+                <div class="item-header">
+                    <strong>{{ solution.description }}</strong>
+                    <div>
+                        <span class="confidence-badge">{{ "%.0f"|format(solution.confidence * 100) }}%</span>
+                        <span class="line-badge">{{ solution.for_line }}</span>
+                        {% if solution.is_applied %}
+                        <span class="status-badge applied">Применено</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="item-content">
+                    <p><strong>Шаги:</strong> {{ solution.steps }}</p>
+                </div>
+
+                <div class="item-actions">
+                    {% if not solution.is_applied %}
+                    <form method="post" action="/solutions/{{ solution.solution_id }}/apply" class="inline-form">
+                        <select name="result" required>
+                            <option value="">Выберите результат</option>
+                            {% for result in result_types %}
+                            <option value="{{ result }}">{{ result }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-small btn-success">Применить</button>
+                    </form>
+                    {% else %}
+                    <small>Результат: {{ solution.result }} ({{ solution.applied_at.strftime('%Y-%m-%d %H:%M') }})</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p class="no-items">Решения не предложены</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Возможные причины -->
+    <section id="causes" class="section">
+        <div class="section-header">
+            <h3>Возможные причины</h3>
+            <button class="btn btn-small" onclick="toggleForm('cause-form')">+ Добавить причину</button>
+        </div>
+
+        <div id="cause-form" class="form-collapsible" style="display: none;">
+            <form method="post" action="/problems/{{ problem.issue_id }}/causes/add" class="inline-form">
+                <div class="form-group">
+                    <label>Описание причины:</label>
+                    <input type="text" name="cause_description" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Уверенность:</label>
+                    <input type="number" name="confidence" min="0" max="1" step="0.1" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+        </div>
+
+        <div class="items-list">
+            {% for cause in causes %}
+            <div class="item-card">
+                <div class="item-header">
+                    <strong>{{ cause.cause_description }}</strong>
+                    <span class="confidence-badge">{{ "%.0f"|format(cause.confidence * 100) }}%</span>
+                </div>
+                <div class="item-date">
+                    {{ cause.created_at.strftime('%H:%M') }}
+                </div>
+            </div>
+            {% else %}
+            <p class="no-items">Причины не определены</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script>
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}

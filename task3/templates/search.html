@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск проблем - Expert Support System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Поиск проблем</h2>
+
+    <div class="search-form-container">
+        <form method="get" action="/search" class="search-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category">Категория:</label>
+                    <select id="category" name="category">
+                        <option value="">Все категории</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Статус:</label>
+                    <select id="status" name="status">
+                        <option value="">Все статусы</option>
+                        {% for status in statuses %}
+                        <option value="{{ status }}" {% if selected_status == status %}selected{% endif %}>
+                            {{ status }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Поиск</button>
+                    <a href="/search" class="btn btn-secondary">Сбросить</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if problems %}
+    <div class="problems-grid">
+        {% for problem in problems %}
+        <div class="problem-card">
+            <div class="problem-header">
+                <h3><a href="/problems/{{ problem.issue_id }}">{{ problem.issue_id }}</a></h3>
+                <span class="status-badge {{ problem.status }}">{{ problem.status }}</span>
+            </div>
+
+            <div class="problem-category">
+                <strong>Категория:</strong> {{ problem.category }}
+            </div>
+
+            <div class="problem-description">
+                {{ problem.user_description|truncate(100) }}
+            </div>
+
+            <div class="problem-stats">
+                <div class="stat">
+                    <span class="stat-label">Симптомы:</span>
+                    <span class="stat-value">{{ problem.symptom_count }}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Действия:</span>
+                    <span class="stat-value">{{ problem.action_count }}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Решения:</span>
+                    <span class="stat-value">{{ problem.solution_count }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-results">
+        <p>Проблемы не найдены</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

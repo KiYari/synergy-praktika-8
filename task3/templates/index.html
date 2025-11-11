@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Expert Support System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-section">
+        <h2>Все проблемы</h2>
+        <a href="/problems/new" class="btn btn-primary">Создать новую проблему</a>
+    </div>
+
+    <div class="problems-grid">
+        {% for problem in problems %}
+        <div class="problem-card">
+            <div class="problem-header">
+                <h3><a href="/problems/{{ problem.issue_id }}">{{ problem.issue_id }}</a></h3>
+                <span class="status-badge {{ problem.status }}">{{ problem.status }}</span>
+            </div>
+
+            <div class="problem-category">
+                <strong>Категория:</strong> {{ problem.category }}
+            </div>
+
+            <div class="problem-description">
+                {{ problem.user_description|truncate(100) }}
+            </div>
+
+            <div class="problem-stats">
+                <div class="stat">
+                    <span class="stat-label">Симптомы:</span>
+                    <span class="stat-value">{{ problem.symptom_count }}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Действия:</span>
+                    <span class="stat-value">{{ problem.action_count }}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Решения:</span>
+                    <span class="stat-value">{{ problem.solution_count }}</span>
+                </div>
+            </div>
+
+            <div class="problem-date">
+                Создана: {{ problem.created_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

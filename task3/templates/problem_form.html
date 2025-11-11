@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Новая проблема - Expert Support System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>Создание новой проблемы</h2>
+
+        <form method="post" action="/problems/create" class="problem-form">
+            <div class="form-group">
+                <label for="category">Категория проблемы:</label>
+                <select id="category" name="category" required>
+                    <option value="">Выберите категорию</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="user_description">Описание проблемы:</label>
+                <textarea id="user_description" name="user_description" rows="5"
+                          placeholder="Подробно опишите проблему..." required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать проблему</button>
+                <a href="/" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
