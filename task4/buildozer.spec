@@ -1,20 +1,30 @@
-# (str) Title of your application
-title = Мои Заметки
-
-# (str) Package name
+[app]
+title = Notes App
 package.name = notesapp
-
-# (str) Package domain (needed for android/ios packaging)
 package.domain = org.example
 
-# (list) Application requirements
-requirements = python3, kivy==2.1.0, kivymd==1.1.1, pillow
+source.dir = .
+source.main = main.py
 
-# (list) Permissions
+version = 1.0
+version.regex = __version__ = ['"](.*)['"]
+version.filename = %(source.dir)s/main.py
+
+requirements = python3,kivy,kivymd,sqlite3
+
 android.permissions = WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 
-# (int) Target Android API, should be at least 21
-android.api = 31
-
-# (str) Minimum supported Android version
+android.api = 33
 android.minapi = 21
+android.sdk = 23
+android.ndk = 25b
+
+orientation = portrait
+
+android.arch = arm64-v8a, armeabi-v7a
+
+fullscreen = 0
+log_level = 2
+
+# Уровень логирования
+log_level = 2
